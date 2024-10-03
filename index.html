@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CALM-MADE BY VIRAT DAS</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background-color: #111;
+            cursor: none;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .custom-pointer {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: transparent;
+            box-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00, 0 0 45px #00ff00;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .circle {
+            width: 150px;
+            height: 150px;
+            border: 10px solid #00ffff;
+            border-top: 10px solid #ff00ff;
+            border-radius: 50%;
+            box-shadow: 0 0 30px #00ffff, 0 0 60px #00ffff, 0 0 90px #ff00ff;
+            transition: box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .circle.hover {
+            box-shadow: 0 0 30px yellow, 0 0 60px yellow, 0 0 90px yellow;
+        }
+
+        .text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: yellow;
+            font-size: 18px;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            text-align: center;
+            letter-spacing: 2px;
+            z-index: 1;
+        }
+
+        .slider-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .slider-label {
+            color: white;
+            font-size: 20px;
+            text-shadow: 0 0 20px yellow, 0 0 30px yellow;
+            margin-bottom: 10px;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 80%;
+            height: 15px;
+            background: #444;
+            border-radius: 5px;
+            outline: none;
+            box-shadow: 0 0 10px yellow;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #00ff00;
+            cursor: pointer;
+            box-shadow: 0 0 10px yellow;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #00ff00;
+            cursor: pointer;
+            box-shadow: 0 0 10px yellow;
+        }
+
+        .raindrop {
+            position: absolute;
+            bottom: 100%;
+            width: 2px;
+            height: 15px;
+            background: rgba(255, 255, 0, 0.5);
+            animation: fall linear forwards;
+            box-shadow: 0 0 10px yellow;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="circle" id="circle">
+        <div class="text">Design Matrix</div>
+    </div>
+
+    <div class="custom-pointer" id="customPointer"></div>
+
+    <div class="slider-container">
+        <div class="slider-label">Rotation Speed:</div>
+        <input type="range" id="speedSlider" class="slider" min="1" max="100" value="10" step="1">
+    </div>
+
+    <audio id="backgroundMusic" loop autoplay preload="auto">
+        <source src="looop.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const customPointer = document.getElementById('customPointer');
+        const circle = document.getElementById('circle');
+        const speedSlider = document.getElementById('speedSlider');
+
+        let rotation = 0;
+        let rotationSpeed = 10;
+
+        function updateAnimationSpeed() {
+            rotationSpeed = speedSlider.value;
+        }
+
+        function animate() {
+            rotation += 2 * (rotationSpeed / 10);
+            circle.style.transform = `rotate(${rotation}deg)`;
+            requestAnimationFrame(animate);
+        }
+
+        function createRaindrop() {
+            const raindrop = document.createElement('div');
+            raindrop.className = 'raindrop';
+            raindrop.style.left = `${Math.random() * 100}vw`;
+            raindrop.style.animationDuration = `${Math.random() * 2 + 2}s`;
+            document.body.appendChild(raindrop);
+
+            raindrop.addEventListener('animationend', () => {
+                raindrop.remove();
+            });
+        }
+
+        setInterval(createRaindrop, 300);
+
+        document.addEventListener('mousemove', (event) => {
+            customPointer.style.left = `${event.clientX}px`;
+            customPointer.style.top = `${event.clientY}px`;
+
+            const rect = circle.getBoundingClientRect();
+            const isHovering = (
+                event.clientX >= rect.left &&
+                event.clientX <= rect.right &&
+                event.clientY >= rect.top &&
+                event.clientY <= rect.bottom
+            );
+
+            if (isHovering) {
+                circle.classList.add('hover');
+            } else {
+                circle.classList.remove('hover');
+            }
+        });
+
+        animate();
+        speedSlider.addEventListener('input', updateAnimationSpeed);
+    </script>
+</body>
+</html>
